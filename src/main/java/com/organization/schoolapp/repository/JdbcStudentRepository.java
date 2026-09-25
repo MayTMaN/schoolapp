@@ -1,10 +1,8 @@
-package com.organization.schoolapp.service;
+package com.organization.schoolapp.repository;
 
 import com.organization.schoolapp.config.DatabaseConnection;
 import com.organization.schoolapp.entity.Student;
-import com.organization.schoolapp.repository.StudentRepository;
 
-import javax.swing.text.html.HTMLDocument;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -12,10 +10,10 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
-public class StudentService implements StudentRepository {
+public class JdbcStudentRepository implements StudentRepository {
     private final DatabaseConnection dbConnection;
 
-    public StudentService(DatabaseConnection dbConnection) {
+    public JdbcStudentRepository(DatabaseConnection dbConnection) {
         this.dbConnection = dbConnection;
     }
 

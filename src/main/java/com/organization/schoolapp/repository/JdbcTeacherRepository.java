@@ -1,8 +1,7 @@
-package com.organization.schoolapp.service;
+package com.organization.schoolapp.repository;
 
 import com.organization.schoolapp.config.DatabaseConnection;
 import com.organization.schoolapp.entity.Teacher;
-import com.organization.schoolapp.repository.TeacherRepository;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -11,10 +10,10 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
-public class TeacherService implements TeacherRepository {
+public class JdbcTeacherRepository implements TeacherRepository {
     private final DatabaseConnection dbConnection;
 
-    public TeacherService(DatabaseConnection dbConnection) {
+    public JdbcTeacherRepository(DatabaseConnection dbConnection) {
         this.dbConnection = dbConnection;
     }
 

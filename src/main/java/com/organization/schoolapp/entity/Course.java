@@ -9,31 +9,50 @@ public class Course {
     private int courseId;
     private String courseName;
 
+
+    public Course(int courseId, String courseName, Teacher teacher) {
+        this.courseId = courseId;
+        this.courseName = courseName;
+        this.teacher = teacher;
+    }
+
+    public Course(String courseName, Teacher teacher) {
+        this.courseName = courseName;
+        this.teacher = teacher;
+    }
+
     public int getCourseId() {
+
         return courseId;
     }
 
     public void setCourseId(int newCourseId) {
+
         this.courseId = newCourseId;
     }
 
     public String getCourseName() {
+
         return courseName;
     }
 
     public void setCourseName(String newCourseName) {
+
         this.courseName = newCourseName;
     }
 
     public List<Student> getStudents() {
+
         return students;
     }
 
     public Teacher getTeacher() {
+
         return teacher;
     }
 
     public void setTeacher(Teacher teacher) {
+
         this.teacher = teacher;
     }
 
