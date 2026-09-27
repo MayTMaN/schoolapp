@@ -1,7 +1,8 @@
-package com.organization.schoolapp.repository;
+package com.organization.schoolapp.repository.jdbc;
 
 import com.organization.schoolapp.config.DatabaseConnection;
 import com.organization.schoolapp.entity.Teacher;
+import com.organization.schoolapp.repository.TeacherRepository;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
