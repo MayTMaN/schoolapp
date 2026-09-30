@@ -15,6 +15,7 @@ public class SchoolManagementApplication {
         JdbcCourseRepository courseRepo = new JdbcCourseRepository(dbConnection);
         JdbcEnrollmentRepository enrollmentRepo = new JdbcEnrollmentRepository(dbConnection);
         JdbcGradeRepository gradeRepo = new JdbcGradeRepository(dbConnection);
+        JdbcAttendanceRepository attendanceRepo = new JdbcAttendanceRepository(dbConnection);
 
         for (Grade g : gradeRepo.findGradesByCourse(2)) {
             System.out.println("Student " + g.getStudent().getName() + g.getCourse().getCourseName() + g.getGrade() + g.getDate());

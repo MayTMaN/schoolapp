@@ -8,6 +8,13 @@ public class Attendance {
     private LocalDate date;
     private boolean isPresent;
 
+    public Attendance (Course course, Student student, LocalDate date, boolean isPresent) {
+        this.course = course;
+        this.student = student;
+        this.date = date;
+        this.isPresent = isPresent;
+    }
+
     public LocalDate getDate() {
         return date;
     }
