@@ -8,6 +8,13 @@ public class Grade {
     private double grade;
     private LocalDate date;
 
+    public Grade(Student student, Course course, double grade, LocalDate date) {
+        this.student = student;
+        this.course = course;
+        this.grade = grade;
+        this.date = date;
+    }
+
     public double getGrade() {
         return grade;
     }
