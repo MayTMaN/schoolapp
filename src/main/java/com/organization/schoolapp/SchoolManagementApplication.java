@@ -3,7 +3,9 @@ package com.organization.schoolapp;
 import com.organization.schoolapp.config.DatabaseConnection;
 import com.organization.schoolapp.entity.Course;
 import com.organization.schoolapp.entity.Grade;
+import com.organization.schoolapp.repository.CourseRepository;
 import com.organization.schoolapp.repository.jdbc.*;
+import com.organization.schoolapp.service.AttendanceService;
 import com.organization.schoolapp.service.GradeService;
 
 import java.time.LocalDate;
@@ -18,6 +20,7 @@ public class SchoolManagementApplication {
         JdbcGradeRepository gradeRepo = new JdbcGradeRepository(dbConnection);
         JdbcAttendanceRepository attendanceRepo = new JdbcAttendanceRepository(dbConnection);
         GradeService gradeService = new GradeService(studentRepo, courseRepo, enrollmentRepo, gradeRepo);
+        AttendanceService attendanceService = new AttendanceService(studentRepo, courseRepo, attendanceRepo, enrollmentRepo);
 
         // nothing here yet
     }
