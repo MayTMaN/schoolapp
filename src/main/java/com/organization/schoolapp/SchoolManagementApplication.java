@@ -4,6 +4,7 @@ import com.organization.schoolapp.config.DatabaseConnection;
 import com.organization.schoolapp.entity.Course;
 import com.organization.schoolapp.entity.Grade;
 import com.organization.schoolapp.repository.jdbc.*;
+import com.organization.schoolapp.service.GradeService;
 
 import java.time.LocalDate;
 
@@ -16,9 +17,8 @@ public class SchoolManagementApplication {
         JdbcEnrollmentRepository enrollmentRepo = new JdbcEnrollmentRepository(dbConnection);
         JdbcGradeRepository gradeRepo = new JdbcGradeRepository(dbConnection);
         JdbcAttendanceRepository attendanceRepo = new JdbcAttendanceRepository(dbConnection);
+        GradeService gradeService = new GradeService(studentRepo, courseRepo, enrollmentRepo, gradeRepo);
 
-        for (Grade g : gradeRepo.findGradesByCourse(2)) {
-            System.out.println("Student " + g.getStudent().getName() + g.getCourse().getCourseName() + g.getGrade() + g.getDate());
-        }
+        // nothing here yet
     }
 }
