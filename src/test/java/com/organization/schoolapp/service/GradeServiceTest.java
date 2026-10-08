@@ -48,7 +48,7 @@ public class GradeServiceTest {
 
     @Test
     void gradeStudent_gradeExactly10_isSaved() {
-        LocalDate date = LocalDate.now();
+        LocalDate date = LocalDate.of(2026,10,8);
 
         givenStudentAndCourseExist(1,1);
         when(enrollmentRepo.isEnrolled(1,1)).thenReturn(true);
@@ -61,7 +61,7 @@ public class GradeServiceTest {
 
     @Test
     void changeGrade_gradeExists_isUpdated() {
-        LocalDate date = LocalDate.now();
+        LocalDate date = LocalDate.of(2026,10,8);
         Student student = new Student(1, "Bob");
         Teacher teacher = new Teacher(1, "Smith");
         Course course = new Course(1, "Math", teacher);
@@ -77,7 +77,7 @@ public class GradeServiceTest {
 
     @Test
     void changeGrade_gradeDoesntExist_throwsException() {
-        LocalDate date = LocalDate.now();
+        LocalDate date = LocalDate.of(2026,10,8);
 
         givenStudentAndCourseExist(1,1);
 
@@ -88,7 +88,7 @@ public class GradeServiceTest {
 
     @Test
     void removeGrade_gradeExists_isRemoved() {
-        LocalDate date = LocalDate.now();
+        LocalDate date = LocalDate.of(2026,10,8);
         Student student = new Student(1, "Bob");
         Teacher teacher = new Teacher(1, "Smith");
         Course course = new Course(1, "Math", teacher);
@@ -105,7 +105,7 @@ public class GradeServiceTest {
 
     @Test
     void removeGrade_gradeDoesntExist_throwsException() {
-        LocalDate date = LocalDate.now();
+        LocalDate date = LocalDate.of(2026,10,8);
 
         givenStudentAndCourseExist(1,1);
 

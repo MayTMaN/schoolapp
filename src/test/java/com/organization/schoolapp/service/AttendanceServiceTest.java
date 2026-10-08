@@ -37,7 +37,7 @@ public class AttendanceServiceTest {
 
     @Test
     void markAttendance_alreadyMarked_throwsException() {
-        LocalDate date = LocalDate.now();
+        LocalDate date = LocalDate.of(2026,10,8);
 
         Student student = new Student(1, "Bob");
         Teacher teacher = new Teacher(1, "Smith");
@@ -55,7 +55,7 @@ public class AttendanceServiceTest {
 
     @Test
     void markAttendance_notMarked_isSaved() {
-        LocalDate date = LocalDate.now();
+        LocalDate date = LocalDate.of(2026,10,8);
 
         givenStudentAndCourseExist(1,1);
         when(enrollmentRepo.isEnrolled(1,1)).thenReturn(true);
@@ -67,7 +67,7 @@ public class AttendanceServiceTest {
 
     @Test
     void changeAttendance_attendanceDoesntExist_throwsException() {
-        LocalDate date = LocalDate.now();
+        LocalDate date = LocalDate.of(2026,10,8);
         givenStudentAndCourseExist(1,1);
 
         assertThrows(IllegalStateException.class, () -> attendanceService.changeAttendance(true,1,1,date));
@@ -77,7 +77,7 @@ public class AttendanceServiceTest {
 
     @Test
     void changeAttendance_attendanceExists_isUpdated() {
-        LocalDate date = LocalDate.now();
+        LocalDate date = LocalDate.of(2026,10,8);
 
         Student student = new Student(1, "Bob");
         Teacher teacher = new Teacher(1, "Smith");
@@ -94,7 +94,7 @@ public class AttendanceServiceTest {
 
     @Test
     void removeAttendance_attendanceDoesntExist_throwsException() {
-        LocalDate date = LocalDate.now();
+        LocalDate date = LocalDate.of(2026,10,8);
         givenStudentAndCourseExist(1,1);
 
         assertThrows(IllegalStateException.class, () -> attendanceService.removeAttendance(1,1,date));
@@ -104,7 +104,7 @@ public class AttendanceServiceTest {
 
     @Test
     void removeAttendance_attendanceExists_isRemoved() {
-        LocalDate date = LocalDate.now();
+        LocalDate date = LocalDate.of(2026,10,8);
 
         Student student = new Student(1, "Bob");
         Teacher teacher = new Teacher(1, "Smith");
