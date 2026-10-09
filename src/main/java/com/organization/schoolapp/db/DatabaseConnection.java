@@ -1,4 +1,4 @@
-package com.organization.schoolapp.config;
+package com.organization.schoolapp.db;
 
 import java.sql.Connection;
 import java.sql.DriverManager;

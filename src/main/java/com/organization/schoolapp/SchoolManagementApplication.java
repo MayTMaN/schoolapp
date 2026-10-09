@@ -1,14 +1,9 @@
 package com.organization.schoolapp;
 
-import com.organization.schoolapp.config.DatabaseConnection;
-import com.organization.schoolapp.entity.Course;
-import com.organization.schoolapp.entity.Grade;
-import com.organization.schoolapp.repository.CourseRepository;
+import com.organization.schoolapp.db.DatabaseConnection;
 import com.organization.schoolapp.repository.jdbc.*;
 import com.organization.schoolapp.service.AttendanceService;
 import com.organization.schoolapp.service.GradeService;
-
-import java.time.LocalDate;
 
 public class SchoolManagementApplication {
     static void main() {

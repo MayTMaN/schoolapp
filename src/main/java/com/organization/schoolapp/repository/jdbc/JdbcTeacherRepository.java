@@ -1,6 +1,6 @@
 package com.organization.schoolapp.repository.jdbc;
 
-import com.organization.schoolapp.config.DatabaseConnection;
+import com.organization.schoolapp.db.DatabaseConnection;
 import com.organization.schoolapp.entity.Teacher;
 import com.organization.schoolapp.repository.TeacherRepository;
 
