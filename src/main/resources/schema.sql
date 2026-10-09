@@ -17,22 +17,22 @@ CREATE TABLE IF NOT EXISTS courses (
 );
 
 CREATE TABLE IF NOT EXISTS enrollments (
-    student_id int REFERENCES students(student_id),
-    course_id int REFERENCES courses(course_id),
+    student_id int REFERENCES students(student_id) ON DELETE CASCADE,
+    course_id int REFERENCES courses(course_id) ON DELETE CASCADE,
     PRIMARY KEY(student_id, course_id)
 );
 
 CREATE TABLE IF NOT EXISTS attendance (
-    student_id int REFERENCES students(student_id),
-    course_id int REFERENCES courses(course_id),
+    student_id int REFERENCES students(student_id) ON DELETE CASCADE,
+    course_id int REFERENCES courses(course_id) ON DELETE CASCADE,
     date DATE,
     is_present BOOLEAN NOT NULL,
     PRIMARY KEY(student_id, course_id, date)
 );
 
 CREATE TABLE IF NOT EXISTS grades (
-    student_id int REFERENCES students(student_id),
-    course_id int REFERENCES courses(course_id),
+    student_id int REFERENCES students(student_id) ON DELETE CASCADE,
+    course_id int REFERENCES courses(course_id) ON DELETE CASCADE,
     grade DOUBLE PRECISION NOT NULL,
     date DATE,
     PRIMARY KEY(student_id, course_id, date)
