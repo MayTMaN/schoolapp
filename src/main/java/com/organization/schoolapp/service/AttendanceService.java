@@ -81,6 +81,32 @@ public class AttendanceService {
         return attendancePercentage;
     }
 
+    public Attendance getAttendance(int courseId, int studentId, LocalDate date) {
+        checkDate(date);
+        checkStudentAndCourseExist(courseId, studentId);
+
+        Attendance attendance = attendanceRepo.findAttendance(courseId, studentId, date);
+
+        if (attendance == null) {
+            throw new IllegalStateException("Attendance hasn't been marked");
+        }
+
+        return attendance;
+    }
+
+    public List<Attendance> getStudentAttendance(int courseId, int studentId) {
+        checkStudentAndCourseExist(courseId, studentId);
+
+        return attendanceRepo.findStudentsAttendance(courseId, studentId);
+    }
+
+    public List<Attendance> getClassAttendance(int courseId, LocalDate date) {
+        checkDate(date);
+        checkCourseExists(courseId);
+
+        return attendanceRepo.findCourseAttendance(courseId, date);
+    }
+
     private void checkDate(LocalDate date) {
         if (date == null) {
             throw new IllegalArgumentException("Date not provided");
@@ -97,6 +123,12 @@ public class AttendanceService {
 
         if (student == null || course == null) {
             throw new IllegalArgumentException("Incorrect student or course");
+        }
+    }
+
+    private void checkCourseExists(int courseId) {
+        if (courseRepo.findById(courseId) == null) {
+            throw new IllegalArgumentException("No course with id " + courseId);
         }
     }
 

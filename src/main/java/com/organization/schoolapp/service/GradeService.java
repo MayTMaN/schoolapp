@@ -79,6 +79,31 @@ public class GradeService {
         return average;
     }
 
+    public Grade getGrade(int courseId, int studentId, LocalDate date) {
+        checkDate(date);
+        checkStudentAndCourseExist(courseId, studentId);
+
+        Grade grade = gradeRepo.findGrade(courseId, studentId, date);
+
+        if (grade == null) {
+            throw new IllegalStateException("This grade does not exist");
+        }
+
+        return grade;
+    }
+
+    public List<Grade> getStudentGrades(int courseId, int studentId) {
+        checkStudentAndCourseExist(courseId, studentId);
+
+        return gradeRepo.findStudentGrades(courseId, studentId);
+    }
+
+    public List<Grade> getCourseGrades(int courseId) {
+        checkCourseExists(courseId);
+
+        return gradeRepo.findGradesByCourse(courseId);
+    }
+
     private void checkDate(LocalDate date) {
         if (date == null) {
             throw new IllegalArgumentException("Date not provided");
@@ -101,6 +126,12 @@ public class GradeService {
 
         if (student == null || course == null) {
             throw new IllegalArgumentException("Incorrect student or course");
+        }
+    }
+
+    private void checkCourseExists(int courseId) {
+        if (courseRepo.findById(courseId) == null) {
+            throw new IllegalArgumentException("No course with id " + courseId);
         }
     }
 

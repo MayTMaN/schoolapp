@@ -19,6 +19,7 @@ import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
@@ -144,6 +145,90 @@ public class GradeServiceTest {
         double average = gradeService.getAverage(1,1);
 
         assertEquals(10, average);
+    }
+
+    @Test
+    void getGrade_gradeExists_returnsGrade() {
+        LocalDate date = LocalDate.of(2026,10,8);
+        Student student = new Student(1, "Bob");
+        Course course = new Course(1, "Math", new Teacher(1, "Smith"));
+        Grade expectedGrade = new Grade(student, course, 8, date);
+
+        when(studentRepo.findById(1)).thenReturn(student);
+        when(courseRepo.findById(1)).thenReturn(course);
+        when(gradeRepo.findGrade(1,1,date)).thenReturn(expectedGrade);
+
+        Grade actualGrade = gradeService.getGrade(1,1,date);
+
+        assertEquals(expectedGrade, actualGrade);
+    }
+
+    @Test
+    void getGrade_gradeDoesntExist_throwsException() {
+        LocalDate date = LocalDate.of(2026,10,8);
+        givenStudentAndCourseExist(1,1);
+
+        assertThrows(IllegalStateException.class, () -> gradeService.getGrade(1,1,date));
+    }
+
+    @Test
+    void getGrade_studentOrCourseDoesntExist_throwsException() {
+        IllegalArgumentException e = assertThrows(IllegalArgumentException.class, () -> gradeService.getGrade(1,1,LocalDate.of(2026,10,8)));
+
+        assertEquals("Incorrect student or course", e.getMessage());
+    }
+
+    @Test
+    void getStudentGrades_twoGrades_returnsGrades() {
+        Student student = new Student(1, "Bob");
+        Course course = new Course(1, "Math", new Teacher(1, "Smith"));
+        List<Grade> expectedGrades = List.of(new Grade(student, course, 6, LocalDate.of(2026,10,7)), new Grade(student, course, 9, LocalDate.of(2026,10,8)));
+
+        when(studentRepo.findById(1)).thenReturn(student);
+        when(courseRepo.findById(1)).thenReturn(course);
+        when(gradeRepo.findStudentGrades(1,1)).thenReturn(expectedGrades);
+
+        List<Grade> actualGrades = gradeService.getStudentGrades(1,1);
+
+        assertEquals(expectedGrades, actualGrades);
+    }
+
+    @Test
+    void getStudentGrades_noGrades_returnsEmptyList() {
+        givenStudentAndCourseExist(1,1);
+
+        List<Grade> actualGrades = gradeService.getStudentGrades(1,1);
+
+        assertTrue(actualGrades.isEmpty());
+    }
+
+    @Test
+    void getStudentGrades_studentOrCourseDoesntExist_throwsException() {
+        IllegalArgumentException e = assertThrows(IllegalArgumentException.class, () -> gradeService.getStudentGrades(1,1));
+
+        assertEquals("Incorrect student or course", e.getMessage());
+    }
+
+    @Test
+    void getCourseGrades_courseExists_returnsGrades() {
+        Course course = new Course(1, "Math", new Teacher(1, "Smith"));
+        List<Grade> expectedGrades = List.of(
+                new Grade(new Student(1, "Bob"), course, 6, LocalDate.of(2026,10,8)),
+                new Grade(new Student(2, "Jane"), course, 9, LocalDate.of(2026,10,8)));
+
+        when(courseRepo.findById(1)).thenReturn(course);
+        when(gradeRepo.findGradesByCourse(1)).thenReturn(expectedGrades);
+
+        List<Grade> actualGrades = gradeService.getCourseGrades(1);
+
+        assertEquals(expectedGrades, actualGrades);
+    }
+
+    @Test
+    void getCourseGrades_courseDoesntExist_throwsException() {
+        IllegalArgumentException e = assertThrows(IllegalArgumentException.class, () -> gradeService.getCourseGrades(1));
+
+        assertEquals("No course with id 1", e.getMessage());
     }
 
     private void givenStudentAndCourseExist(int courseId, int studentId) {
