@@ -6,6 +6,7 @@ import com.organization.schoolapp.entity.Grade;
 import com.organization.schoolapp.entity.Student;
 import com.organization.schoolapp.entity.Teacher;
 import com.organization.schoolapp.repository.GradeRepository;
+import org.springframework.stereotype.Repository;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -15,6 +16,7 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
+@Repository
 public class JdbcGradeRepository implements GradeRepository {
     private final DatabaseConnection dbConnection;
 

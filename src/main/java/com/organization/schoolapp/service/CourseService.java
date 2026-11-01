@@ -4,9 +4,11 @@ import com.organization.schoolapp.entity.Course;
 import com.organization.schoolapp.entity.Teacher;
 import com.organization.schoolapp.repository.CourseRepository;
 import com.organization.schoolapp.repository.TeacherRepository;
+import org.springframework.stereotype.Service;
 
 import java.util.List;
 
+@Service
 public class CourseService {
     private final CourseRepository courseRepo;
     private final TeacherRepository teacherRepo;

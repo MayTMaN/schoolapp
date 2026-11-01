@@ -4,6 +4,7 @@ import com.organization.schoolapp.db.DatabaseConnection;
 import com.organization.schoolapp.entity.Course;
 import com.organization.schoolapp.entity.Teacher;
 import com.organization.schoolapp.repository.CourseRepository;
+import org.springframework.stereotype.Repository;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -12,6 +13,7 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
+@Repository
 public class JdbcCourseRepository implements CourseRepository {
     private final DatabaseConnection dbConnection;
 

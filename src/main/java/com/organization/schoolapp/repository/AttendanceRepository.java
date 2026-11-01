@@ -4,6 +4,7 @@ import com.organization.schoolapp.entity.Attendance;
 
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Optional;
 
 public interface AttendanceRepository {
 
@@ -13,7 +14,7 @@ public interface AttendanceRepository {
 
     void update(boolean isPresent, int courseId, int studentId, LocalDate date);
 
-    Attendance findAttendance(int courseId, int studentId, LocalDate date);
+    Optional<Attendance> findAttendance(int courseId, int studentId, LocalDate date);
 
     List<Attendance> findStudentsAttendance(int courseId, int studentId);
 

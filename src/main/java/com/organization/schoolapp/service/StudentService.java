@@ -2,9 +2,11 @@ package com.organization.schoolapp.service;
 
 import com.organization.schoolapp.entity.Student;
 import com.organization.schoolapp.repository.StudentRepository;
+import org.springframework.stereotype.Service;
 
 import java.util.List;
 
+@Service
 public class StudentService {
     private final StudentRepository studentRepo;
 

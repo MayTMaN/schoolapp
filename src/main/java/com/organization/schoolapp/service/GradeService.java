@@ -7,10 +7,12 @@ import com.organization.schoolapp.repository.CourseRepository;
 import com.organization.schoolapp.repository.EnrollmentRepository;
 import com.organization.schoolapp.repository.GradeRepository;
 import com.organization.schoolapp.repository.StudentRepository;
+import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
 import java.util.List;
 
+@Service
 public class GradeService {
     private final StudentRepository studentRepo;
     private final CourseRepository courseRepo;

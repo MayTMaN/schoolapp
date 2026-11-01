@@ -5,9 +5,11 @@ import com.organization.schoolapp.entity.Student;
 import com.organization.schoolapp.repository.CourseRepository;
 import com.organization.schoolapp.repository.EnrollmentRepository;
 import com.organization.schoolapp.repository.StudentRepository;
+import org.springframework.stereotype.Service;
 
 import java.util.List;
 
+@Service
 public class EnrollmentService {
 
     private final StudentRepository studentRepo;
