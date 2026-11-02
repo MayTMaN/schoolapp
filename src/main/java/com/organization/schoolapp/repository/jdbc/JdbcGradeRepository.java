@@ -6,6 +6,8 @@ import com.organization.schoolapp.entity.Grade;
 import com.organization.schoolapp.entity.Student;
 import com.organization.schoolapp.entity.Teacher;
 import com.organization.schoolapp.repository.GradeRepository;
+import org.springframework.jdbc.core.RowMapper;
+import org.springframework.jdbc.core.simple.JdbcClient;
 import org.springframework.stereotype.Repository;
 
 import java.sql.Connection;
@@ -15,107 +17,72 @@ import java.sql.SQLException;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 @Repository
 public class JdbcGradeRepository implements GradeRepository {
-    private final DatabaseConnection dbConnection;
+    private final JdbcClient jdbcClient;
+    private final static RowMapper<Grade> GRADE_MAPPER = ((resultSet, rowNum) -> {
+        Student student = new Student(resultSet.getInt("student_id"), resultSet.getString("student_name"));
+        Teacher teacher = new Teacher(resultSet.getInt("teacher_id"), resultSet.getString("teacher_name"));
+        Course course = new Course(resultSet.getInt("course_id"), resultSet.getString("course_name"), teacher);
+        Grade grade = new Grade(student,course,resultSet.getDouble("grade"), resultSet.getObject("date", LocalDate.class));
+        return grade;
+    });
 
-    public JdbcGradeRepository(DatabaseConnection dbConnection) {
-        this.dbConnection = dbConnection;
+    public JdbcGradeRepository(JdbcClient jdbcClient) {
+        this.jdbcClient = jdbcClient;
     }
 
     @Override
     public void setGrade(double grade, int courseId, int studentId, LocalDate date) {
-        String sql = "INSERT INTO grades (grade, course_id, student_id, date) VALUES (?,?,?,?)";
-
-        try (Connection connection = dbConnection.getConnection();
-             PreparedStatement statement = connection.prepareStatement(sql)) {
-
-            statement.setDouble(1, grade);
-            statement.setInt(2,courseId);
-            statement.setInt(3,studentId);
-            statement.setObject(4,date);
-
-            statement.executeUpdate();
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-
-
+        jdbcClient.sql("INSERT INTO grades (grade, course_id, student_id, date) VALUES (?,?,?,?)")
+                .param(1, grade)
+                .param(2, courseId)
+                .param(3, studentId)
+                .param(4, date)
+                .update();
     }
 
     @Override
     public void updateGrade(int courseId, int studentId, LocalDate date, double newGrade) {
-        String sql = "UPDATE grades SET grade = ? WHERE course_id = ? AND student_id = ? AND date = ?";
-
-        try (Connection connection = dbConnection.getConnection();
-             PreparedStatement statement = connection.prepareStatement(sql)) {
-
-            statement.setDouble(1,newGrade);
-            statement.setInt(2,courseId);
-            statement.setInt(3,studentId);
-            statement.setObject(4, date);
-
-            statement.executeUpdate();
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
+        jdbcClient.sql("UPDATE grades SET grade = ? WHERE course_id = ? AND student_id = ? AND date = ?")
+                .param(1, newGrade)
+                .param(2, courseId)
+                .param(3, studentId)
+                .param(4, date)
+                .update();
     }
 
     @Override
     public void removeGrade(int courseId, int studentId, LocalDate date) {
-        String sql = "DELETE FROM grades WHERE course_id = ? AND student_id = ? AND date = ?";
-
-        try (Connection connection = dbConnection.getConnection();
-             PreparedStatement statement = connection.prepareStatement(sql)) {
-
-            statement.setInt(1,courseId);
-            statement.setInt(2,studentId);
-            statement.setObject(3,date);
-
-            statement.executeUpdate();
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
+        jdbcClient.sql("DELETE FROM grades WHERE course_id = ? AND student_id = ? AND date = ?")
+                .param(1, courseId)
+                .param(2, studentId)
+                .param(3, date)
+                .update();
     }
 
     @Override
-    public Grade findGrade(int courseId, int studentId, LocalDate date) {
-        String sql = "SELECT grades.grade, grades.date,\n" +
-        "students.student_id, students.name AS student_name,\n" +
-        "courses.course_id, courses.course_name,\n" +
-        "teachers.teacher_id, teachers.name AS teacher_name\n" +
-        "FROM grades\n" +
-        "JOIN students ON grades.student_id = students.student_id\n" +
-        "JOIN courses  ON grades.course_id  = courses.course_id\n" +
-        "JOIN teachers ON courses.teacher_id = teachers.teacher_id\n" +
-        "WHERE grades.course_id = ? AND grades.student_id = ? AND grades.date = ?";
-
-        try (Connection connection = dbConnection.getConnection();
-             PreparedStatement statement = connection.prepareStatement(sql)) {
-            statement.setInt(1,courseId);
-            statement.setInt(2,studentId);
-            statement.setObject(3,date);
-
-            ResultSet resultSet = statement.executeQuery();
-            if(resultSet.next()) {
-                Student student = new Student(resultSet.getInt("student_id"), resultSet.getString("student_name"));
-                Teacher teacher = new Teacher(resultSet.getInt("teacher_id"), resultSet.getString("teacher_name"));
-                Course course = new Course(resultSet.getInt("course_id"), resultSet.getString("course_name"), teacher);
-                Grade grade = new Grade(student,course,resultSet.getDouble("setGrade"), resultSet.getObject("date", LocalDate.class));
-                return grade;
-            } else {
-                return null;
-            }
-        } catch (SQLException e) {
-            e.printStackTrace();
-            return null;
-        }
+    public Optional<Grade> findGrade(int courseId, int studentId, LocalDate date) {
+        return jdbcClient.sql("SELECT grades.grade, grades.date,\n" +
+                "students.student_id, students.name AS student_name,\n" +
+                "courses.course_id, courses.course_name,\n" +
+                "teachers.teacher_id, teachers.name AS teacher_name\n" +
+                "FROM grades\n" +
+                "JOIN students ON grades.student_id = students.student_id\n" +
+                "JOIN courses  ON grades.course_id  = courses.course_id\n" +
+                "JOIN teachers ON courses.teacher_id = teachers.teacher_id\n" +
+                "WHERE grades.course_id = ? AND grades.student_id = ? AND grades.date = ?")
+                .param(1, courseId)
+                .param(2, studentId)
+                .param(3, date)
+                .query(GRADE_MAPPER).optional();
     }
 
     @Override
     public List<Grade> findStudentGrades(int courseId, int studentId) {
-        String sql = "SELECT grades.grade, grades.date,\n" +
+        return jdbcClient.sql("SELECT grades.grade, grades.date,\n" +
                 "students.student_id, students.name AS student_name,\n" +
                 "courses.course_id, courses.course_name,\n" +
                 "teachers.teacher_id, teachers.name AS teacher_name\n" +
@@ -123,33 +90,15 @@ public class JdbcGradeRepository implements GradeRepository {
                 "JOIN students ON grades.student_id = students.student_id\n" +
                 "JOIN courses  ON grades.course_id  = courses.course_id\n" +
                 "JOIN teachers ON courses.teacher_id = teachers.teacher_id\n" +
-                "WHERE grades.course_id = ? AND grades.student_id = ?";
-
-        try (Connection connection = dbConnection.getConnection();
-             PreparedStatement statement = connection.prepareStatement(sql)) {
-
-            statement.setInt(1, courseId);
-            statement.setInt(2, studentId);
-            ResultSet resultSet = statement.executeQuery();
-            List<Grade> grades = new ArrayList<>();
-            while (resultSet.next()) {
-                Student student = new Student(resultSet.getInt("student_id"), resultSet.getString("student_name"));
-                Teacher teacher = new Teacher(resultSet.getInt("teacher_id"), resultSet.getString("teacher_name"));
-                Course course = new Course(resultSet.getInt("course_id"), resultSet.getString("course_name"), teacher);
-                Grade grade = new Grade(student,course,resultSet.getDouble("setGrade"), resultSet.getObject("date", LocalDate.class));
-                grades.add(grade);
-            }
-
-            return grades;
-        } catch (SQLException e) {
-            e.printStackTrace();
-            return List.of();
-        }
+                "WHERE grades.course_id = ? AND grades.student_id = ?")
+                .param(1, courseId)
+                .param(2, studentId)
+                .query(GRADE_MAPPER).list();
     }
 
     @Override
     public List<Grade> findGradesByCourse(int courseId) {
-        String sql = "SELECT grades.grade, grades.date,\n" +
+        return jdbcClient.sql("SELECT grades.grade, grades.date,\n" +
                 "students.student_id, students.name AS student_name,\n" +
                 "courses.course_id, courses.course_name,\n" +
                 "teachers.teacher_id, teachers.name AS teacher_name\n" +
@@ -157,26 +106,8 @@ public class JdbcGradeRepository implements GradeRepository {
                 "JOIN students ON grades.student_id = students.student_id\n" +
                 "JOIN courses  ON grades.course_id  = courses.course_id\n" +
                 "JOIN teachers ON courses.teacher_id = teachers.teacher_id\n" +
-                "WHERE grades.course_id = ?";
-
-        try (Connection connection = dbConnection.getConnection();
-             PreparedStatement statement = connection.prepareStatement(sql)) {
-
-            statement.setInt(1, courseId);
-            ResultSet resultSet = statement.executeQuery();
-            List<Grade> grades = new ArrayList<>();
-            while (resultSet.next()) {
-                Student student = new Student(resultSet.getInt("student_id"), resultSet.getString("student_name"));
-                Teacher teacher = new Teacher(resultSet.getInt("teacher_id"), resultSet.getString("teacher_name"));
-                Course course = new Course(resultSet.getInt("course_id"), resultSet.getString("course_name"), teacher);
-                Grade grade = new Grade(student,course,resultSet.getDouble("setGrade"), resultSet.getObject("date", LocalDate.class));
-                grades.add(grade);
-            }
-
-            return grades;
-        } catch (SQLException e) {
-            e.printStackTrace();
-            return List.of();
-        }
+                "WHERE grades.course_id = ?")
+                .param(1, courseId)
+                .query(GRADE_MAPPER).list();
     }
 }

@@ -4,6 +4,7 @@ import com.organization.schoolapp.entity.Grade;
 
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Optional;
 
 public interface GradeRepository {
 
@@ -13,7 +14,7 @@ public interface GradeRepository {
 
     void removeGrade(int courseId, int studentId, LocalDate date);
 
-    Grade findGrade(int courseId, int studentId, LocalDate date);
+    Optional<Grade> findGrade(int courseId, int studentId, LocalDate date);
 
     List<Grade> findStudentGrades(int courseId, int studentId);
 
