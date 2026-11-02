@@ -4,6 +4,8 @@ import com.organization.schoolapp.db.DatabaseConnection;
 import com.organization.schoolapp.entity.Course;
 import com.organization.schoolapp.entity.Teacher;
 import com.organization.schoolapp.repository.CourseRepository;
+import org.springframework.jdbc.core.RowMapper;
+import org.springframework.jdbc.core.simple.JdbcClient;
 import org.springframework.stereotype.Repository;
 
 import java.sql.Connection;
@@ -12,105 +14,62 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 @Repository
 public class JdbcCourseRepository implements CourseRepository {
-    private final DatabaseConnection dbConnection;
 
-    public JdbcCourseRepository(DatabaseConnection dbConnection) {
-        this.dbConnection = dbConnection;
+    private final JdbcClient jdbcClient;
+    private static final RowMapper<Course> COURSE_MAPPER = ((resultSet, rowNum) -> {
+        Teacher teacher = new Teacher(resultSet.getInt("teacher_id"), resultSet.getString("name"));
+        Course course = new Course(resultSet.getInt("course_id"), resultSet.getString("course_name"), teacher);
+        return course;
+    });
+
+    public JdbcCourseRepository(JdbcClient jdbcClient) {
+        this.jdbcClient = jdbcClient;
     }
 
 
     @Override
     public void save(Course course) {
-        String sql = "INSERT INTO courses (course_name, teacher_id) VALUES (?, ?)";
-
-        try (Connection connection = dbConnection.getConnection();
-             PreparedStatement statement = connection.prepareStatement(sql)) {
-
-            statement.setString(1, course.getCourseName());
-            statement.setInt(2, course.getTeacher().getId());
-            statement.executeUpdate();
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
+        jdbcClient.sql("INSERT INTO courses (course_name, teacher_id) VALUES (?, ?)")
+                .param(1, course.getCourseName())
+                .param(2, course.getTeacher().getId())
+                .update();
     }
 
     @Override
     public void delete(int courseId) {
-        String sql = "DELETE FROM courses WHERE course_id = ?";
-
-        try (Connection connection = dbConnection.getConnection();
-             PreparedStatement statement = connection.prepareStatement(sql)) {
-
-            statement.setInt(1,courseId);
-            statement.executeUpdate();
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
+        jdbcClient.sql("DELETE FROM courses WHERE course_id = ?")
+                .param(1, courseId)
+                .update();
     }
 
     @Override
     public void update(Course course) {
-        String sql = "UPDATE courses SET course_name = ?, teacher_id = ? WHERE course_id = ?";
-
-        try (Connection connection = dbConnection.getConnection();
-             PreparedStatement statement = connection.prepareStatement(sql)) {
-
-            statement.setString(1, course.getCourseName());
-            statement.setInt(2, course.getTeacher().getId());
-            statement.setInt(3,course.getCourseId());
-            statement.executeUpdate();
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
+        jdbcClient.sql("UPDATE courses SET course_name = ?, teacher_id = ? WHERE course_id = ?")
+                .param(1, course.getCourseName())
+                .param(2, course.getTeacher().getId())
+                .param(3, course.getCourseId())
+                .update();
     }
 
     @Override
-    public Course findById(int courseId) {
-        String sql = "SELECT courses.course_id, courses.course_name, teachers.teacher_id, teachers.name\n" +
+    public Optional<Course> findById(int courseId) {
+        return jdbcClient.sql("SELECT courses.course_id, courses.course_name, teachers.teacher_id, teachers.name\n" +
                 "FROM courses\n" +
                 "JOIN teachers ON courses.teacher_id = teachers.teacher_id\n" +
-                "WHERE courses.course_id = ?";
-
-        try (Connection connection = dbConnection.getConnection();
-             PreparedStatement statement = connection.prepareStatement(sql)) {
-            statement.setInt(1,courseId);
-            ResultSet resultSet = statement.executeQuery();
-
-            if (resultSet.next()) {
-                Teacher teacher = new Teacher(resultSet.getInt("teacher_id"), resultSet.getString("name"));
-                Course course = new Course(resultSet.getInt("course_id"), resultSet.getString("course_name"), teacher);
-                return course;
-            } else {
-                return null;
-            }
-
-        } catch (SQLException e) {
-            e.printStackTrace();
-            return null;
-        }
+                "WHERE courses.course_id = ?")
+                .param(1, courseId)
+                .query(COURSE_MAPPER)
+                .optional();
     }
 
     @Override
     public List<Course> findAll() {
-        String sql = "SELECT * FROM courses JOIN teachers ON courses.teacher_id = teachers.teacher_id";
-
-        try (Connection connection = dbConnection.getConnection();
-             PreparedStatement statement = connection.prepareStatement(sql)) {
-            List<Course> courses = new ArrayList<>();
-            ResultSet resultSet = statement.executeQuery();
-            while (resultSet.next()) {
-                Teacher teacher = new Teacher(resultSet.getInt("teacher_id"), resultSet.getString("name"));
-                Course course = new Course(resultSet.getInt("course_id"), resultSet.getString("course_name"), teacher);
-                courses.add(course);
-            }
-
-            return courses;
-        } catch (SQLException e) {
-            e.printStackTrace();
-            return List.of();
-        }
+        return jdbcClient.sql("SELECT * FROM courses JOIN teachers ON courses.teacher_id = teachers.teacher_id")
+                .query(COURSE_MAPPER)
+                .list();
     }
 }

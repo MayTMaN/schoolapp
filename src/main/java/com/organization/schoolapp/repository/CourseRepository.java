@@ -3,6 +3,7 @@ package com.organization.schoolapp.repository;
 import com.organization.schoolapp.entity.Course;
 
 import java.util.List;
+import java.util.Optional;
 
 public interface CourseRepository {
 
@@ -12,7 +13,7 @@ public interface CourseRepository {
 
     void update (Course course);
 
-    Course findById(int courseId);
+    Optional<Course> findById(int courseId);
 
     List<Course> findAll();
 
