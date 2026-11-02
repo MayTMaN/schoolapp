@@ -3,6 +3,8 @@ package com.organization.schoolapp.repository.jdbc;
 import com.organization.schoolapp.db.DatabaseConnection;
 import com.organization.schoolapp.entity.Teacher;
 import com.organization.schoolapp.repository.TeacherRepository;
+import org.springframework.jdbc.core.RowMapper;
+import org.springframework.jdbc.core.simple.JdbcClient;
 import org.springframework.stereotype.Repository;
 
 import java.sql.Connection;
@@ -11,81 +13,46 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 @Repository
 public class JdbcTeacherRepository implements TeacherRepository {
-    private final DatabaseConnection dbConnection;
+    private final JdbcClient jdbcClient;
+    private final static RowMapper<Teacher> TEACHER_MAPPER = (resultSet, rowNum) -> {
+        Teacher teacher = new Teacher(resultSet.getInt("teacher_id"), resultSet.getString("name"));
+        return teacher;
+    };
 
-    public JdbcTeacherRepository(DatabaseConnection dbConnection) {
-        this.dbConnection = dbConnection;
+    public JdbcTeacherRepository(JdbcClient jdbcClient) {
+        this.jdbcClient = jdbcClient;
     }
 
     @Override
     public void save(Teacher teacher) {
-        String sql = "INSERT INTO teachers (name) VALUES (?)";
-
-        try (Connection connection = dbConnection.getConnection();
-             PreparedStatement statement = connection.prepareStatement(sql)) {
-
-            statement.setString(1, teacher.getName());
-            statement.executeUpdate();
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
+        jdbcClient.sql("INSERT INTO teachers (name) VALUES (?)")
+                .param(1, teacher.getName())
+                .update();
     }
 
     @Override
     public void delete(int teacherId) {
-        String sql = "DELETE FROM teachers WHERE teacher_id = ?";
-
-        try (Connection connection = dbConnection.getConnection();
-             PreparedStatement statement = connection.prepareStatement(sql)) {
-
-            statement.setInt(1, teacherId);
-            statement.executeUpdate();
-
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
+        jdbcClient.sql("DELETE FROM teachers WHERE teacher_id = ?")
+                .param(1, teacherId)
+                .update();
     }
 
     @Override
-    public Teacher findById(int teacherId) {
-        String sql = "SELECT * FROM teachers WHERE teacher_id = ?";
-
-        try (Connection connection = dbConnection.getConnection();
-             PreparedStatement statement = connection.prepareStatement(sql)) {
-            statement.setInt(1,teacherId);
-            ResultSet resultSet = statement.executeQuery();
-            if (resultSet.next()) {
-                Teacher teacher = new Teacher(resultSet.getInt("teacher_id"), resultSet.getString("name"));
-                return teacher;
-            } else {
-                return null;
-            }
-        } catch (SQLException e) {
-            e.printStackTrace();
-            return null;
-        }
+    public Optional<Teacher> findById(int teacherId) {
+        return jdbcClient.sql("SELECT * FROM teachers WHERE teacher_id = ?")
+                .param(1, teacherId)
+                .query(TEACHER_MAPPER)
+                .optional();
     }
 
     @Override
     public List<Teacher> findAll() {
-        String sql = "SELECT * FROM teachers";
-
-        try (Connection connection = dbConnection.getConnection();
-             PreparedStatement statement = connection.prepareStatement(sql)) {
-            List<Teacher> teachers = new ArrayList<>();
-            ResultSet resultSet = statement.executeQuery();
-            while (resultSet.next()) {
-                Teacher teacher = new Teacher(resultSet.getInt("teacher_id"), resultSet.getString("name"));
-                teachers.add(teacher);
-            }
-
-            return teachers;
-        } catch (SQLException e) {
-            e.printStackTrace();
-            return List.of();
-        }
+        return jdbcClient.sql("SELECT * FROM teachers")
+                .query(TEACHER_MAPPER)
+                .list();
     }
 }
