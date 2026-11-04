@@ -37,10 +37,8 @@ public class EnrollmentService {
     }
 
     public List<Student> getStudentsByCourse (int courseId) {
-        Course course = courseRepo.findById(courseId);
-        if (course == null) {
-            throw new IllegalArgumentException("Course " + courseId + " doesn't exist");
-        }
+        courseRepo.findById(courseId)
+                .orElseThrow(() -> new IllegalArgumentException("Course " + courseId + " doesn't exist"));
 
         List<Student> enrolledStudents = enrollmentRepo.findStudentsByCourse(courseId);
 
@@ -48,10 +46,7 @@ public class EnrollmentService {
     }
 
     private void checkStudentAndCourseExist (int courseId, int studentId) {
-        Student student = studentRepo.findById(studentId);
-        Course course = courseRepo.findById(courseId);
-
-        if (student == null || course == null) {
+        if (studentRepo.findById(studentId).isEmpty() || courseRepo.findById(courseId).isEmpty()) {
             throw new IllegalArgumentException("Incorrect student or course");
         }
     }

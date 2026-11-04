@@ -32,7 +32,7 @@ public class GradeService {
         checkStudentAndCourseExist(courseId, studentId);
         checkEnrolled(courseId, studentId);
 
-        if (gradeRepo.findGrade(courseId, studentId, date) != null) {
+        if (gradeRepo.findGrade(courseId, studentId, date).isPresent()) {
             throw new IllegalArgumentException("A grade on this date already exists");
         }
 
@@ -44,7 +44,7 @@ public class GradeService {
         checkGrade(grade);
         checkStudentAndCourseExist(courseId, studentId);
 
-        if (gradeRepo.findGrade(courseId, studentId, date) == null) {
+        if (gradeRepo.findGrade(courseId, studentId, date).isEmpty()) {
             throw new IllegalStateException("This grade does not exist");
         }
 
@@ -55,7 +55,7 @@ public class GradeService {
         checkDate(date);
         checkStudentAndCourseExist(courseId, studentId);
 
-        if (gradeRepo.findGrade(courseId, studentId, date) == null) {
+        if (gradeRepo.findGrade(courseId, studentId, date).isEmpty()) {
             throw new IllegalStateException("This grade does not exist");
         }
 
@@ -85,13 +85,8 @@ public class GradeService {
         checkDate(date);
         checkStudentAndCourseExist(courseId, studentId);
 
-        Grade grade = gradeRepo.findGrade(courseId, studentId, date);
-
-        if (grade == null) {
-            throw new IllegalStateException("This grade does not exist");
-        }
-
-        return grade;
+        return gradeRepo.findGrade(courseId, studentId, date)
+                .orElseThrow(() -> new IllegalStateException("This grade does not exist"));
     }
 
     public List<Grade> getStudentGrades(int courseId, int studentId) {
@@ -123,18 +118,14 @@ public class GradeService {
     }
 
     private void checkStudentAndCourseExist (int courseId, int studentId) {
-        Student student = studentRepo.findById(studentId);
-        Course course = courseRepo.findById(courseId);
-
-        if (student == null || course == null) {
+        if (studentRepo.findById(studentId).isEmpty() || courseRepo.findById(courseId).isEmpty()) {
             throw new IllegalArgumentException("Incorrect student or course");
         }
     }
 
     private void checkCourseExists(int courseId) {
-        if (courseRepo.findById(courseId) == null) {
-            throw new IllegalArgumentException("No course with id " + courseId);
-        }
+        courseRepo.findById(courseId)
+                .orElseThrow(() -> new IllegalArgumentException("No course with id " + courseId));
     }
 
     private void checkEnrolled (int courseId, int studentId) {

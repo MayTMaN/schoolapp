@@ -11,6 +11,7 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class AttendanceService {
@@ -32,7 +33,7 @@ public class AttendanceService {
         checkStudentAndCourseExist(courseId, studentId);
         checkEnrolled(courseId, studentId);
 
-        if (attendanceRepo.findAttendance(courseId, studentId, date) != null) {
+        if (attendanceRepo.findAttendance(courseId, studentId, date).isPresent()) {
             throw new IllegalArgumentException("Attendance was already marked on this date");
         }
 
@@ -43,7 +44,7 @@ public class AttendanceService {
         checkDate(date);
         checkStudentAndCourseExist(courseId, studentId);
 
-        if(attendanceRepo.findAttendance(courseId,studentId,date) == null) {
+        if(attendanceRepo.findAttendance(courseId,studentId,date).isEmpty()) {
             throw new IllegalStateException("Attendance hasn't been marked");
         }
 
@@ -54,7 +55,7 @@ public class AttendanceService {
         checkDate(date);
         checkStudentAndCourseExist(courseId, studentId);
 
-        if(attendanceRepo.findAttendance(courseId,studentId,date) == null) {
+        if(attendanceRepo.findAttendance(courseId,studentId,date).isEmpty()) {
             throw new IllegalStateException("Attendance hasn't been marked");
         }
 
@@ -87,13 +88,8 @@ public class AttendanceService {
         checkDate(date);
         checkStudentAndCourseExist(courseId, studentId);
 
-        Attendance attendance = attendanceRepo.findAttendance(courseId, studentId, date);
-
-        if (attendance == null) {
-            throw new IllegalStateException("Attendance hasn't been marked");
-        }
-
-        return attendance;
+        return attendanceRepo.findAttendance(courseId, studentId, date)
+                .orElseThrow(() -> new IllegalStateException("Attendance hasn't been marked"));
     }
 
     public List<Attendance> getStudentAttendance(int courseId, int studentId) {
@@ -120,16 +116,13 @@ public class AttendanceService {
     }
 
     private void checkStudentAndCourseExist (int courseId, int studentId) {
-        Student student = studentRepo.findById(studentId);
-        Course course = courseRepo.findById(courseId);
-
-        if (student == null || course == null) {
+        if (studentRepo.findById(studentId).isEmpty() || courseRepo.findById(courseId).isEmpty()) {
             throw new IllegalArgumentException("Incorrect student or course");
         }
     }
 
     private void checkCourseExists(int courseId) {
-        if (courseRepo.findById(courseId) == null) {
+        if (courseRepo.findById(courseId).isEmpty()) {
             throw new IllegalArgumentException("No course with id " + courseId);
         }
     }

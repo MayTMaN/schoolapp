@@ -59,12 +59,7 @@ public class TeacherService {
     }
 
     private Teacher findExistingTeacher(int teacherId) {
-        Teacher teacher = teacherRepo.findById(teacherId);
-
-        if (teacher == null) {
-            throw new IllegalArgumentException("No teacher with id " + teacherId);
-        }
-
-        return teacher;
+        return teacherRepo.findById(teacherId)
+                .orElseThrow(() -> new IllegalArgumentException("No teacher with id " + teacherId));
     }
 }

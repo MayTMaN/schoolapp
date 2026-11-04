@@ -6,7 +6,9 @@ import com.organization.schoolapp.repository.CourseRepository;
 import com.organization.schoolapp.repository.TeacherRepository;
 import org.springframework.stereotype.Service;
 
+import javax.swing.text.html.Option;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class CourseService {
@@ -62,22 +64,12 @@ public class CourseService {
     }
 
     private Course findExistingCourse(int courseId) {
-        Course course = courseRepo.findById(courseId);
-
-        if (course == null) {
-            throw new IllegalArgumentException("No course with id " + courseId);
-        }
-
-        return course;
+        return courseRepo.findById(courseId)
+                .orElseThrow(() -> new IllegalArgumentException("No course with id " + courseId));
     }
 
     private Teacher findExistingTeacher(int teacherId) {
-        Teacher teacher = teacherRepo.findById(teacherId);
-
-        if (teacher == null) {
-            throw new IllegalArgumentException("No teacher with id " + teacherId);
-        }
-
-        return teacher;
+        return teacherRepo.findById(teacherId)
+                .orElseThrow(() -> new IllegalArgumentException("No teacher with id " + teacherId));
     }
 }

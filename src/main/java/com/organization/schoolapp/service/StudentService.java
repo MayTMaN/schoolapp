@@ -41,12 +41,7 @@ public class StudentService {
     }
 
     private Student findExistingStudent(int studentId) {
-        Student student = studentRepo.findById(studentId);
-
-        if (student == null) {
-            throw new IllegalArgumentException("No student with id " + studentId);
-        }
-
-        return student;
+        return studentRepo.findById(studentId)
+                .orElseThrow(() -> new IllegalArgumentException("No student with id " + studentId));
     }
 }
