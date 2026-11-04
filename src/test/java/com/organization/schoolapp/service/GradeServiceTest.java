@@ -16,6 +16,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -38,8 +39,8 @@ public class GradeServiceTest {
 
     @Test
     void gradeStudent_gradeAbove10_throwsException() {
-        lenient().when(studentRepo.findById(1)).thenReturn(new Student(1,"Bob"));
-        lenient().when(courseRepo.findById(1)).thenReturn(new Course(1, "Math", new Teacher("Bob")));
+        lenient().when(studentRepo.findById(1)).thenReturn(Optional.of(new Student(1,"Bob")));
+        lenient().when(courseRepo.findById(1)).thenReturn(Optional.of(new Course(1, "Math", new Teacher("Bob"))));
         lenient().when(enrollmentRepo.isEnrolled(1,1)).thenReturn(true);
 
         assertThrows(IllegalArgumentException.class, () -> gradeService.gradeStudent(11, 1, 1, LocalDate.now()));
@@ -67,9 +68,9 @@ public class GradeServiceTest {
         Teacher teacher = new Teacher(1, "Smith");
         Course course = new Course(1, "Math", teacher);
 
-        when(studentRepo.findById(1)).thenReturn(student);
-        when(courseRepo.findById(1)).thenReturn(course);
-        when(gradeRepo.findGrade(1,1,date)).thenReturn(new Grade(student, course, 10, date));
+        when(studentRepo.findById(1)).thenReturn(Optional.of(student));
+        when(courseRepo.findById(1)).thenReturn(Optional.of(course));
+        when(gradeRepo.findGrade(1,1,date)).thenReturn(Optional.of(new Grade(student, course, 10, date)));
 
         gradeService.changeGrade(5,1,1,date);
 
@@ -94,10 +95,10 @@ public class GradeServiceTest {
         Teacher teacher = new Teacher(1, "Smith");
         Course course = new Course(1, "Math", teacher);
 
-        when(studentRepo.findById(1)).thenReturn(student);
-        when(courseRepo.findById(1)).thenReturn(course);
+        when(studentRepo.findById(1)).thenReturn(Optional.of(student));
+        when(courseRepo.findById(1)).thenReturn(Optional.of(course));
 
-        when(gradeRepo.findGrade(1,1,date)).thenReturn(new Grade(student, course, 10, date));
+        when(gradeRepo.findGrade(1,1,date)).thenReturn(Optional.of(new Grade(student, course, 10, date)));
 
         gradeService.removeGrade(1,1,date);
 
@@ -121,8 +122,8 @@ public class GradeServiceTest {
         Teacher teacher = new Teacher(1, "Smith");
         Course course = new Course(1, "Math", teacher);
 
-        when(studentRepo.findById(1)).thenReturn(student);
-        when(courseRepo.findById(1)).thenReturn(course);
+        when(studentRepo.findById(1)).thenReturn(Optional.of(student));
+        when(courseRepo.findById(1)).thenReturn(Optional.of(course));
         when(enrollmentRepo.isEnrolled(1,1)).thenReturn(true);
         when(gradeRepo.findStudentGrades(1,1)).thenReturn(List.of(new Grade(student,course,6,LocalDate.now()), new Grade(student,course,9,LocalDate.now())));
 
@@ -137,8 +138,8 @@ public class GradeServiceTest {
         Teacher teacher = new Teacher(1, "Smith");
         Course course = new Course(1, "Math", teacher);
 
-        when(studentRepo.findById(1)).thenReturn(student);
-        when(courseRepo.findById(1)).thenReturn(course);
+        when(studentRepo.findById(1)).thenReturn(Optional.of(student));
+        when(courseRepo.findById(1)).thenReturn(Optional.of(course));
         when(enrollmentRepo.isEnrolled(1,1)).thenReturn(true);
         when(gradeRepo.findStudentGrades(1,1)).thenReturn(List.of(new Grade(student,course,10,LocalDate.now())));
 
@@ -154,9 +155,9 @@ public class GradeServiceTest {
         Course course = new Course(1, "Math", new Teacher(1, "Smith"));
         Grade expectedGrade = new Grade(student, course, 8, date);
 
-        when(studentRepo.findById(1)).thenReturn(student);
-        when(courseRepo.findById(1)).thenReturn(course);
-        when(gradeRepo.findGrade(1,1,date)).thenReturn(expectedGrade);
+        when(studentRepo.findById(1)).thenReturn(Optional.of(student));
+        when(courseRepo.findById(1)).thenReturn(Optional.of(course));
+        when(gradeRepo.findGrade(1,1,date)).thenReturn(Optional.of(expectedGrade));
 
         Grade actualGrade = gradeService.getGrade(1,1,date);
 
@@ -184,8 +185,8 @@ public class GradeServiceTest {
         Course course = new Course(1, "Math", new Teacher(1, "Smith"));
         List<Grade> expectedGrades = List.of(new Grade(student, course, 6, LocalDate.of(2026,10,7)), new Grade(student, course, 9, LocalDate.of(2026,10,8)));
 
-        when(studentRepo.findById(1)).thenReturn(student);
-        when(courseRepo.findById(1)).thenReturn(course);
+        when(studentRepo.findById(1)).thenReturn(Optional.of(student));
+        when(courseRepo.findById(1)).thenReturn(Optional.of(course));
         when(gradeRepo.findStudentGrades(1,1)).thenReturn(expectedGrades);
 
         List<Grade> actualGrades = gradeService.getStudentGrades(1,1);
@@ -216,7 +217,7 @@ public class GradeServiceTest {
                 new Grade(new Student(1, "Bob"), course, 6, LocalDate.of(2026,10,8)),
                 new Grade(new Student(2, "Jane"), course, 9, LocalDate.of(2026,10,8)));
 
-        when(courseRepo.findById(1)).thenReturn(course);
+        when(courseRepo.findById(1)).thenReturn(Optional.of(course));
         when(gradeRepo.findGradesByCourse(1)).thenReturn(expectedGrades);
 
         List<Grade> actualGrades = gradeService.getCourseGrades(1);
@@ -236,7 +237,7 @@ public class GradeServiceTest {
         Teacher teacher = new Teacher(1, "Smith");
         Course course = new Course(courseId, "Math", teacher);
 
-        when(studentRepo.findById(studentId)).thenReturn(student);
-        when(courseRepo.findById(courseId)).thenReturn(course);
+        when(studentRepo.findById(studentId)).thenReturn(Optional.of(student));
+        when(courseRepo.findById(courseId)).thenReturn(Optional.of(course));
     }
 }

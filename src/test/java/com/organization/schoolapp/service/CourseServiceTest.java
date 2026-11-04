@@ -12,6 +12,7 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.List;
+import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -51,7 +52,7 @@ public class CourseServiceTest {
     @Test
     void addCourse_nameAndTeacherGiven_isSaved() {
         Teacher teacher = new Teacher(1, "Smith");
-        when(teacherRepo.findById(1)).thenReturn(teacher);
+        when(teacherRepo.findById(1)).thenReturn(Optional.of(teacher));
         ArgumentCaptor<Course> captor = ArgumentCaptor.forClass(Course.class);
 
         courseService.addCourse("Math", 1);
@@ -64,7 +65,7 @@ public class CourseServiceTest {
     @Test
     void getCourse_courseExists_returnsCourse() {
         Course expectedCourse = new Course(1, "Math", new Teacher(1, "Smith"));
-        when(courseRepo.findById(1)).thenReturn(expectedCourse);
+        when(courseRepo.findById(1)).thenReturn(Optional.of(expectedCourse));
 
         Course actualCourse = courseService.getCourse(1);
 
@@ -104,7 +105,7 @@ public class CourseServiceTest {
     @Test
     void renameCourse_courseExists_isRenamedAndKeepsTeacher() {
         Teacher teacher = new Teacher(1, "Smith");
-        when(courseRepo.findById(1)).thenReturn(new Course(1, "Math", teacher));
+        when(courseRepo.findById(1)).thenReturn(Optional.of(new Course(1, "Math", teacher)));
         ArgumentCaptor<Course> captor = ArgumentCaptor.forClass(Course.class);
 
         courseService.renameCourse(1, "  Algebra  ");
@@ -123,7 +124,7 @@ public class CourseServiceTest {
 
     @Test
     void changeTeacher_newTeacherDoesntExist_throwsException() {
-        when(courseRepo.findById(1)).thenReturn(new Course(1, "Math", new Teacher(1, "Smith")));
+        when(courseRepo.findById(1)).thenReturn(Optional.of(new Course(1, "Math", new Teacher(1, "Smith"))));
 
         assertThrows(IllegalArgumentException.class, () -> courseService.changeTeacher(1, 2));
 
@@ -132,9 +133,9 @@ public class CourseServiceTest {
 
     @Test
     void changeTeacher_courseAndTeacherExist_isUpdatedAndKeepsName() {
-        when(courseRepo.findById(1)).thenReturn(new Course(1, "Math", new Teacher(1, "Smith")));
+        when(courseRepo.findById(1)).thenReturn(Optional.of(new Course(1, "Math", new Teacher(1, "Smith"))));
         Teacher newTeacher = new Teacher(2, "Jones");
-        when(teacherRepo.findById(2)).thenReturn(newTeacher);
+        when(teacherRepo.findById(2)).thenReturn(Optional.of(newTeacher));
         ArgumentCaptor<Course> captor = ArgumentCaptor.forClass(Course.class);
 
         courseService.changeTeacher(1, 2);
@@ -153,7 +154,7 @@ public class CourseServiceTest {
 
     @Test
     void deleteCourse_courseExists_isDeleted() {
-        when(courseRepo.findById(1)).thenReturn(new Course(1, "Math", new Teacher(1, "Smith")));
+        when(courseRepo.findById(1)).thenReturn(Optional.of(new Course(1, "Math", new Teacher(1, "Smith"))));
 
         courseService.deleteCourse(1);
 

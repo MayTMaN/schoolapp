@@ -12,6 +12,7 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.List;
+import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -54,7 +55,7 @@ public class TeacherServiceTest {
     @Test
     void getTeacher_teacherExists_returnsTeacher() {
         Teacher expectedTeacher = new Teacher(1, "Smith");
-        when(teacherRepo.findById(1)).thenReturn(expectedTeacher);
+        when(teacherRepo.findById(1)).thenReturn(Optional.of(expectedTeacher));
 
         Teacher actualTeacher = teacherService.getTeacher(1);
 
@@ -86,7 +87,7 @@ public class TeacherServiceTest {
     @Test
     void deleteTeacher_teacherStillTeachesCourse_throwsException() {
         Teacher teacher = new Teacher(1, "Smith");
-        when(teacherRepo.findById(1)).thenReturn(teacher);
+        when(teacherRepo.findById(1)).thenReturn(Optional.of(teacher));
         when(courseRepo.findAll()).thenReturn(List.of(new Course(1, "Math", teacher)));
 
         assertThrows(IllegalStateException.class, () -> teacherService.deleteTeacher(1));
@@ -96,7 +97,7 @@ public class TeacherServiceTest {
 
     @Test
     void deleteTeacher_teachesNoCourses_isDeleted() {
-        when(teacherRepo.findById(1)).thenReturn(new Teacher(1, "Smith"));
+        when(teacherRepo.findById(1)).thenReturn(Optional.of(new Teacher(1, "Smith")));
 
         teacherService.deleteTeacher(1);
 

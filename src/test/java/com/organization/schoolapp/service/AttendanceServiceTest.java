@@ -14,8 +14,10 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import javax.swing.text.html.Option;
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -43,10 +45,10 @@ public class AttendanceServiceTest {
         Teacher teacher = new Teacher(1, "Smith");
         Course course = new Course(1, "Math", teacher);
 
-        when(studentRepo.findById(1)).thenReturn(student);
-        when(courseRepo.findById(1)).thenReturn(course);
+        when(studentRepo.findById(1)).thenReturn(Optional.of(student));
+        when(courseRepo.findById(1)).thenReturn(Optional.of(course));
         when(enrollmentRepo.isEnrolled(1,1)).thenReturn(true);
-        when(attendanceRepo.findAttendance(1,1,date)).thenReturn(new Attendance(course, student, date, true));
+        when(attendanceRepo.findAttendance(1,1,date)).thenReturn(Optional.of(new Attendance(course, student, date, true)));
 
         assertThrows(IllegalArgumentException.class, () -> attendanceService.markAttendance(true,1,1, date));
 
@@ -83,9 +85,9 @@ public class AttendanceServiceTest {
         Teacher teacher = new Teacher(1, "Smith");
         Course course = new Course(1, "Math", teacher);
 
-        when(studentRepo.findById(1)).thenReturn(student);
-        when(courseRepo.findById(1)).thenReturn(course);
-        when(attendanceRepo.findAttendance(1,1,date)).thenReturn(new Attendance(course, student, date, true));
+        when(studentRepo.findById(1)).thenReturn(Optional.of(student));
+        when(courseRepo.findById(1)).thenReturn(Optional.of(course));
+        when(attendanceRepo.findAttendance(1,1,date)).thenReturn(Optional.of(new Attendance(course, student, date, true)));
 
         attendanceService.changeAttendance(false,1,1,date);
 
@@ -110,9 +112,9 @@ public class AttendanceServiceTest {
         Teacher teacher = new Teacher(1, "Smith");
         Course course = new Course(1, "Math", teacher);
 
-        when(studentRepo.findById(1)).thenReturn(student);
-        when(courseRepo.findById(1)).thenReturn(course);
-        when(attendanceRepo.findAttendance(1,1,date)).thenReturn(new Attendance(course, student, date, true));
+        when(studentRepo.findById(1)).thenReturn(Optional.of(student));
+        when(courseRepo.findById(1)).thenReturn(Optional.of(course));
+        when(attendanceRepo.findAttendance(1,1,date)).thenReturn(Optional.of(new Attendance(course, student, date, true)));
 
         attendanceService.removeAttendance(1,1,date);
 
@@ -133,8 +135,8 @@ public class AttendanceServiceTest {
         Teacher teacher = new Teacher(1, "Smith");
         Course course = new Course(1, "Math", teacher);
 
-        when(studentRepo.findById(1)).thenReturn(student);
-        when(courseRepo.findById(1)).thenReturn(course);
+        when(studentRepo.findById(1)).thenReturn(Optional.of(student));
+        when(courseRepo.findById(1)).thenReturn(Optional.of(course));
         when(enrollmentRepo.isEnrolled(1,1)).thenReturn(true);
         when(attendanceRepo.findStudentsAttendance(1,1)).thenReturn(List.of(new Attendance(course, student, LocalDate.of(2026,10,5), true), new Attendance(course,student,LocalDate.of(2026,10,4), false)));
 
@@ -149,8 +151,8 @@ public class AttendanceServiceTest {
         Teacher teacher = new Teacher(1, "Smith");
         Course course = new Course(1, "Math", teacher);
 
-        when(studentRepo.findById(1)).thenReturn(student);
-        when(courseRepo.findById(1)).thenReturn(course);
+        when(studentRepo.findById(1)).thenReturn(Optional.of(student));
+        when(courseRepo.findById(1)).thenReturn(Optional.of(course));
         when(enrollmentRepo.isEnrolled(1,1)).thenReturn(true);
         when(attendanceRepo.findStudentsAttendance(1,1)).thenReturn(List.of(new Attendance(course, student, LocalDate.of(2026,10,5), true)));
         double percentage = attendanceService.getAttendancePercentage(1,1);
@@ -164,8 +166,8 @@ public class AttendanceServiceTest {
         Teacher teacher = new Teacher(1, "Smith");
         Course course = new Course(1, "Math", teacher);
 
-        when(studentRepo.findById(1)).thenReturn(student);
-        when(courseRepo.findById(1)).thenReturn(course);
+        when(studentRepo.findById(1)).thenReturn(Optional.of(student));
+        when(courseRepo.findById(1)).thenReturn(Optional.of(course));
         when(enrollmentRepo.isEnrolled(1,1)).thenReturn(true);
         when(attendanceRepo.findStudentsAttendance(1,1)).thenReturn(List.of(new Attendance(course, student, LocalDate.of(2026,10,5), false)));
         double percentage = attendanceService.getAttendancePercentage(1,1);
@@ -180,9 +182,9 @@ public class AttendanceServiceTest {
         Course course = new Course(1, "Math", new Teacher(1, "Smith"));
         Attendance expectedAttendance = new Attendance(course, student, date, true);
 
-        when(studentRepo.findById(1)).thenReturn(student);
-        when(courseRepo.findById(1)).thenReturn(course);
-        when(attendanceRepo.findAttendance(1,1,date)).thenReturn(expectedAttendance);
+        when(studentRepo.findById(1)).thenReturn(Optional.of(student));
+        when(courseRepo.findById(1)).thenReturn(Optional.of(course));
+        when(attendanceRepo.findAttendance(1,1,date)).thenReturn(Optional.of(expectedAttendance));
 
         Attendance actualAttendance = attendanceService.getAttendance(1,1,date);
 
@@ -214,8 +216,8 @@ public class AttendanceServiceTest {
                 new Attendance(course, student, LocalDate.of(2026,10,7), true),
                 new Attendance(course, student, LocalDate.of(2026,10,8), false));
 
-        when(studentRepo.findById(1)).thenReturn(student);
-        when(courseRepo.findById(1)).thenReturn(course);
+        when(studentRepo.findById(1)).thenReturn(Optional.of(student));
+        when(courseRepo.findById(1)).thenReturn(Optional.of(course));
         when(attendanceRepo.findStudentsAttendance(1,1)).thenReturn(expectedAttendance);
 
         List<Attendance> actualAttendance = attendanceService.getStudentAttendance(1,1);
@@ -238,7 +240,7 @@ public class AttendanceServiceTest {
                 new Attendance(course, new Student(1, "Bob"), date, true),
                 new Attendance(course, new Student(2, "Jane"), date, false));
 
-        when(courseRepo.findById(1)).thenReturn(course);
+        when(courseRepo.findById(1)).thenReturn(Optional.of(course));
         when(attendanceRepo.findCourseAttendance(1,date)).thenReturn(expectedClassList);
 
         List<Attendance> actualClassList = attendanceService.getClassAttendance(1,date);
@@ -265,7 +267,7 @@ public class AttendanceServiceTest {
         Teacher teacher = new Teacher(1, "Smith");
         Course course = new Course(courseId, "Math", teacher);
 
-        when(studentRepo.findById(studentId)).thenReturn(student);
-        when(courseRepo.findById(courseId)).thenReturn(course);
+        when(studentRepo.findById(studentId)).thenReturn(Optional.of(student));
+        when(courseRepo.findById(courseId)).thenReturn(Optional.of(course));
     }
 }

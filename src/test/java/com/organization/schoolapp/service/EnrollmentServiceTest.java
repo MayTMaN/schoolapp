@@ -14,6 +14,7 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.List;
+import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -82,7 +83,7 @@ public class EnrollmentServiceTest {
     void getStudentsByCourse_courseIsEmpty_returnsEmptyList() {
         Teacher teacher = new Teacher(1, "Smith");
         Course course = new Course(1, "Math", teacher);
-        when(courseRepo.findById(1)).thenReturn(course);
+        when(courseRepo.findById(1)).thenReturn(Optional.of(course));
 
         List<Student> expectedList = List.of();
         List<Student> actualList = enrollmentService.getStudentsByCourse(1);
@@ -94,7 +95,7 @@ public class EnrollmentServiceTest {
     void getStudentsByCourse_TwoStudents_returnsTwoStudents() {
         Teacher teacher = new Teacher(1, "Smith");
         Course course = new Course(1, "Math", teacher);
-        when(courseRepo.findById(1)).thenReturn(course);
+        when(courseRepo.findById(1)).thenReturn(Optional.of(course));
 
         List<Student> expectedList = List.of(new Student(1,"John"), new Student(2,"Jane"));
         when(enrollmentRepo.findStudentsByCourse(1)).thenReturn(expectedList);
@@ -109,7 +110,7 @@ public class EnrollmentServiceTest {
         Teacher teacher = new Teacher(1, "Smith");
         Course course = new Course(courseId, "Math", teacher);
 
-        when(studentRepo.findById(studentId)).thenReturn(student);
-        when(courseRepo.findById(courseId)).thenReturn(course);
+        when(studentRepo.findById(studentId)).thenReturn(Optional.of(student));
+        when(courseRepo.findById(courseId)).thenReturn(Optional.of(course));
     }
 }

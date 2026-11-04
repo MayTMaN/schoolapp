@@ -10,6 +10,7 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.List;
+import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -52,7 +53,7 @@ public class StudentServiceTest {
     void getStudent_studentExists_returnsStudent() {
         Student expectedStudent = new Student(1, "Bob");
 
-        when(studentRepo.findById(1)).thenReturn(expectedStudent);
+        when(studentRepo.findById(1)).thenReturn(Optional.of(expectedStudent));
 
         Student actualStudent = studentService.getStudent(1);
 
@@ -61,7 +62,7 @@ public class StudentServiceTest {
 
     @Test
     void getStudent_studentIsNull_throwsException() {
-        when(studentRepo.findById(1)).thenReturn(null);
+        when(studentRepo.findById(1)).thenReturn(Optional.empty());
 
         assertThrows(IllegalArgumentException.class, () -> studentService.getStudent(1));
     }
@@ -86,7 +87,7 @@ public class StudentServiceTest {
 
     @Test
     void deleteStudent_studentExists_isDeleted() {
-        when(studentRepo.findById(1)).thenReturn(new Student(1, "Bob"));
+        when(studentRepo.findById(1)).thenReturn(Optional.of(new Student(1, "Bob")));
 
         studentService.deleteStudent(1);
 
