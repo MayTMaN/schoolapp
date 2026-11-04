@@ -6,9 +6,7 @@ import com.organization.schoolapp.repository.CourseRepository;
 import com.organization.schoolapp.repository.TeacherRepository;
 import org.springframework.stereotype.Service;
 
-import javax.swing.text.html.Option;
 import java.util.List;
-import java.util.Optional;
 
 @Service
 public class CourseService {

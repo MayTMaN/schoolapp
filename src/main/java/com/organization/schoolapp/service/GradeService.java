@@ -1,8 +1,6 @@
 package com.organization.schoolapp.service;
 
-import com.organization.schoolapp.entity.Course;
 import com.organization.schoolapp.entity.Grade;
-import com.organization.schoolapp.entity.Student;
 import com.organization.schoolapp.repository.CourseRepository;
 import com.organization.schoolapp.repository.EnrollmentRepository;
 import com.organization.schoolapp.repository.GradeRepository;

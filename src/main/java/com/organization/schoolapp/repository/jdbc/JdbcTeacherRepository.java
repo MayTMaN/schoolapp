@@ -1,17 +1,11 @@
 package com.organization.schoolapp.repository.jdbc;
 
-import com.organization.schoolapp.db.DatabaseConnection;
 import com.organization.schoolapp.entity.Teacher;
 import com.organization.schoolapp.repository.TeacherRepository;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.simple.JdbcClient;
 import org.springframework.stereotype.Repository;
 
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 

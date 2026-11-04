@@ -1,8 +1,6 @@
 package com.organization.schoolapp.service;
 
 import com.organization.schoolapp.entity.Attendance;
-import com.organization.schoolapp.entity.Course;
-import com.organization.schoolapp.entity.Student;
 import com.organization.schoolapp.repository.AttendanceRepository;
 import com.organization.schoolapp.repository.CourseRepository;
 import com.organization.schoolapp.repository.EnrollmentRepository;
@@ -11,7 +9,6 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
 import java.util.List;
-import java.util.Optional;
 
 @Service
 public class AttendanceService {

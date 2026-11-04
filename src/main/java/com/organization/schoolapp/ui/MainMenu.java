@@ -1,20 +1,23 @@
 package com.organization.schoolapp.ui;
 
+import org.springframework.stereotype.Component;
+
 import java.util.Scanner;
 
+@Component
 public class MainMenu {
 
     private final StudentMenu studentMenu;
     private final TeacherMenu teacherMenu;
     private final CourseMenu courseMenu;
+    private final Scanner scanner;
 
-    public MainMenu(StudentMenu studentMenu, TeacherMenu teacherMenu, CourseMenu courseMenu) {
+    public MainMenu(StudentMenu studentMenu, TeacherMenu teacherMenu, CourseMenu courseMenu, Scanner scanner) {
         this.studentMenu = studentMenu;
         this.teacherMenu = teacherMenu;
         this.courseMenu = courseMenu;
+        this.scanner = scanner;
     }
-
-    public static Scanner scanner = new Scanner(System.in); // to-do: inject scanners in other menus instead of making it static
 
     public void start() {
         boolean running = true;

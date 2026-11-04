@@ -6,22 +6,25 @@ import com.organization.schoolapp.entity.Student;
 import com.organization.schoolapp.service.AttendanceService;
 import com.organization.schoolapp.service.CourseService;
 import com.organization.schoolapp.service.EnrollmentService;
+import org.springframework.stereotype.Component;
 
 import java.time.LocalDate;
 import java.time.format.DateTimeParseException;
 import java.util.List;
+import java.util.Scanner;
 
-import static com.organization.schoolapp.ui.MainMenu.scanner;
-
+@Component
 public class CourseMenu {
     private final CourseService courseService;
     private final EnrollmentService enrollmentService;
     private final AttendanceService attendanceService;
+    private final Scanner scanner;
 
-    public CourseMenu(CourseService courseService, EnrollmentService enrollmentService, AttendanceService attendanceService) {
+    public CourseMenu(CourseService courseService, EnrollmentService enrollmentService, AttendanceService attendanceService, Scanner scanner) {
         this.courseService = courseService;
         this.enrollmentService = enrollmentService;
         this.attendanceService = attendanceService;
+        this.scanner = scanner;
     }
 
     public void start() {

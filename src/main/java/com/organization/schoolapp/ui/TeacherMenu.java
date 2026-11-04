@@ -4,22 +4,25 @@ import com.organization.schoolapp.entity.Teacher;
 import com.organization.schoolapp.service.AttendanceService;
 import com.organization.schoolapp.service.GradeService;
 import com.organization.schoolapp.service.TeacherService;
+import org.springframework.stereotype.Component;
 
 import java.time.LocalDate;
 import java.time.format.DateTimeParseException;
 import java.util.List;
+import java.util.Scanner;
 
-import static com.organization.schoolapp.ui.MainMenu.scanner;
-
+@Component
 public class TeacherMenu {
     private final TeacherService teacherService;
     private final GradeService gradeService;
     private final AttendanceService attendanceService;
+    private final Scanner scanner;
 
-    public TeacherMenu(TeacherService teacherService, GradeService gradeService, AttendanceService attendanceService) {
+    public TeacherMenu(TeacherService teacherService, GradeService gradeService, AttendanceService attendanceService, Scanner scanner) {
         this.teacherService = teacherService;
         this.gradeService = gradeService;
         this.attendanceService = attendanceService;
+        this.scanner = scanner;
     }
 
     public void start() {
